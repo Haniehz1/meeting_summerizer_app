@@ -1,26 +1,55 @@
 
-  # Action Items AI
+# Action Items AI
 
-  This project is a Next.js 14 (App Router) application that generates meeting action items by calling the OpenAI API. The UI follows the Action Items AI concept from https://www.figma.com/design/EZQaEVZpU5sW3kG3NzWGjU/Action-Items-AI-UI-Design.
+Simple Next.js 14 (App Router) app that turns meeting transcripts into actionable tasks using OpenAI (gpt-4o-mini). The UI mirrors the Action Items AI Figma concept.
 
-  ## Prerequisites
+## Prerequisites
+- Node.js 18+
+- OpenAI API key with access to `gpt-4o-mini`
 
-  - Node.js 18+
-  - An OpenAI API key with access to gpt-4o-mini
+Create `.env.local` (or set env vars in Vercel):
+```bash
+OPENAI_API_KEY=your-openai-api-key
+```
 
-  Create a `.env.local` file with:
+## Quick start
+```bash
+npm install
+npm run dev          # start locally (defaults to port 3000)
+# or choose a port: npm run dev -- --port 3003
+```
 
-  ```bash
-  OPENAI_API_KEY=your-key-here
-  ```
+## Build & run
+```bash
+npm run build        # production build
+npm start            # run the built app
+```
 
-  ## Scripts
+## API
+`POST /api/generate`
+```json
+{
+  "transcript": "meeting text here"
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "actionItems": [
+    { "task": "Prepare Q1 dashboard", "owner": "Lisa", "deadline": "Friday" }
+  ]
+}
+```
+Errors return `{ success: false, error: "message" }`.
 
-  ```bash
-  npm install
-  npm run dev      # starts Next.js locally
-  npm run build    # production build
-  npm start        # run the production build
-  npm run lint     # lint the project
-  ```
-  
+## Frontend flow
+- `app/page.tsx` uses `useActionItemsGenerator` (lib/useActionItemsGenerator.ts) to:
+  - handle text/file input
+  - post to `/api/generate`
+  - render results and copy/export state
+- UI components live in `src/components`.
+
+## Notes
+- No database or auth; all processing is request/response.
+- Keep your real `OPENAI_API_KEY` out of git—use `.env.local` or Vercel env settings.
